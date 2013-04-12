@@ -1,6 +1,6 @@
-include GlysellinParentApi::UrlHelper
-GlysellinParentApi::Engine.routes.draw do
-  GlysellinParentApi.accessible_resources.each do |model|
+include RestfulSync::UrlHelper
+RestfulSync::Engine.routes.draw do
+  RestfulSync.accessible_resources.each do |model|
 
     path = url_namespace_for(model).split('/').reverse
     res = path.shift

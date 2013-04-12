@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    glysellin_parent_api (0.0.1)
+    restful_sync (0.0.1)
       rails (~> 3.2.13)
 
 GEM
@@ -93,6 +93,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  glysellin_parent_api!
+  restful_sync!
   jquery-rails
   sqlite3
