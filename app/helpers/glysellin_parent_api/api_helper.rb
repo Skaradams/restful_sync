@@ -1,5 +1,4 @@
 module GlysellinParentApi
-  module ApplicationHelper
-
+  module ApiHelper
   end
 end

@@ -1,11 +1,17 @@
-require_dependency "glysellin_child_api/application_controller"
-
-module GlysellinChildApi
+module GlysellinParentApi
   class ApiController < ApplicationController
+    include NestedResourceHelper
+    include UrlHelper
     before_filter :init
-    
+
+    rescue_from ActiveRecord::RecordNotFound do
+      @response = {message: "record not found"}
+      render_json
+    end
+
     def init
-      @status = 500
+      @model = model_const_from request.path
+      @status = 404
       @response = {}
     end
 
@@ -14,39 +20,38 @@ module GlysellinChildApi
     end
 
     def create
-      object = @model.new(JSON.parse(params[:attributes]))
-      if object.save
+      if (object = process_nested_resource).valid?
         @status = 200
       else
-        @response = object.errors if object
+        @response = object.errors 
       end
+
       render_json
     end
   
     def update
-      attributes = JSON.parse(params[:attributes])
-      begin
-        object = @model.update(attributes.delete("id"), attributes)
-        if !object.valid?
-          @response = object.errors 
-        else
-          @status = 200
-        end
-      rescue ActiveRecord::RecordNotFound
-        @response = {message: "record not found"}
+      if (object = process_nested_resource).valid?
+        @status = 200
+      else
+        @response = object.errors 
       end
+      
       render_json
     end
   
     def destroy
-      attributes = JSON.parse(params[:attributes])
-      begin
-        attributes["id"] && @model.destroy(attributes["id"])
-        @status = 200
-      rescue ActiveRecord::RecordNotFound
-        @response = {message: "record not found"}
-      end
+      # @model.destroy(params[:id].to_i)
+      @status = 200
+      
       render_json
+    end
+
+    protected
+
+    def model_const_from path
+      path = path.split('/').drop(2)
+      path.pop if path.last.match(/^[0-9]+$/)
+      path.join('/').singularize.camelize.constantize
     end
   end
 end

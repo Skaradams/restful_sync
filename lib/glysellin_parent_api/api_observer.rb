@@ -1,15 +1,12 @@
-module Glysellin
+module GlysellinParentApi
   class ApiObserver < ActiveRecord::Observer
+  
     class << self
-      attr_accessor :observed_class
-
-      def register klass, observed_class
-        # Glysellin.observers << klass
-        observe observed_class
-        @observed_class = observed_class
+      def init_observable
+        observe GlysellinParentApi.observed_resources
       end
     end
-
+    
     def after_create object
       ApiNotifier.notify!(:post, object)
     end
