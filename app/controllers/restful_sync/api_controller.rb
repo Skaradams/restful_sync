@@ -40,7 +40,7 @@ module RestfulSync
     end
   
     def destroy
-      # @model.destroy(params[:id].to_i)
+      @model.destroy(params[:id].to_i)
       @status = 200
       
       render_json
