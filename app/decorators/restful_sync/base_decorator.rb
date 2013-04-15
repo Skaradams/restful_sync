@@ -10,21 +10,27 @@ module RestfulSync
       nested_resources = source.class.reflect_on_all_associations
 
       nested_resources.each do |association|
+        p association.name
         if source.nested_attributes_options.keys.include? association.name
-          attributes["#{association.name}_attributes"] = {}
-            
+          p "ASSOCIATION"
+          
           if (associated = source.send(association.name))
+            p "exists"
+            attributes["#{association.name}_attributes"] = {}
             # Has many
             if associated.is_a?(ActiveRecord::Relation)
+              p "HAS MANY"
               associated.each_with_index do |associated_object, i|
                 attributes["#{association.name}_attributes"][i.to_s] = self.class.decorate(associated_object).as_json
               end
             # Has one
             else
-              attributes["#{association.name}_attributes"] = self.class.decorate(associated_object).as_json
+              p "HAS ONE"
+              attributes["#{association.name}_attributes"] = self.class.decorate(associated).as_json
             end
           end
         else
+          p "IDS"
           if [:has_many, :has_and_belongs_to_many].include? association.macro
             key = association.name.to_s.singularize
             attributes["#{key}_ids"] = []

@@ -9,6 +9,9 @@ module RestfulSync
   mattr_accessor :end_point
   @@end_point = ""  
 
+  mattr_accessor :override_api_controller
+  @@override_api_controller = []
+
   def self.config
     yield self if block_given?
     RestfulSync::ApiObserver.init_observable
