@@ -4,6 +4,7 @@ module RestfulSync
     attr_accessor :has_many_attributes, :has_many_through_attributes
     
     def as_json
+      
       attributes = source.attributes
       attributes = attributes.as_json.delete_if { |key, value| ["updated_at", "created_at"].include? key }
       
@@ -16,13 +17,14 @@ module RestfulSync
           if (associated = source.send(association.name))
             attributes["#{association.name}_attributes"] = {}
             # Has many
-            if associated.is_a?(ActiveRecord::Relation)
+            if associated.is_a?(Array)
               associated.each_with_index do |associated_object, i|
                 attributes["#{association.name}_attributes"][i.to_s] = self.class.decorate(associated_object).as_json
               end
             # Has one
             else
-              attributes["#{association.name}_attributes"] = self.class.decorate(associated).as_json
+              obj = associated.is_a?(ActiveRecord::Relation) ? obj : self.class.decorate(associated)
+              attributes["#{association.name}_attributes"] = obj.as_json
             end
           end
         else
