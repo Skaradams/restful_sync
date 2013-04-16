@@ -47,6 +47,7 @@ end
 
 <tt>end_point</tt> is the base URL to the distant API
 
+> A model must not be define in both accessible and observed resources.
 
 ## Override API controllers
 
@@ -60,7 +61,7 @@ end
 
 <tt>override_api_controller</tt> is a list of models that will have specific routes
 
-Example for model <tt>User</tt>
+### Example for model <tt>User</tt>
 
 routes will be the following :
 * POST /users => restful_sync/users#create
