@@ -5,7 +5,7 @@ module RestfulSync
     class << self
       def notify! action, object
         id = object.id if %(put delete).include? action.to_s 
-        Nestful.send(action, endpoint_for(object, id), decorated(object).as_json, :format => Nestful::Formats::JsonFormat.new)    
+        Nestful.send(action, endpoint_for(object, id), decorated(object).as_json.merge(model: object.class.to_s), :format => Nestful::Formats::JsonFormat.new)    
       end
 
       def endpoint_for object, id=nil

@@ -2,7 +2,6 @@ module RestfulSync
   module NestedResourceHelper
     def process_nested_resource
       ids, data = parse_resource_hash params["api"]
-
       create_resource ids, data do
         resource = @model.where(id: params[:id]).first
         resource.destroy if resource

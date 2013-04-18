@@ -26,6 +26,7 @@ describe RestfulSync::BaseDecorator do
 
     it "should build hash of attributes" do
       hash = @user_attributes.merge("id" => 1,  "products_attributes" => {})
+      
       RestfulSync::ApiNotifier.decorated(@user).as_json.should eq(hash)
     end
 
@@ -33,6 +34,7 @@ describe RestfulSync::BaseDecorator do
       @user.products = @products
       @user.save
       hash = @user_attributes.merge("id" => 1,  "products_attributes" => @products_attributes)
+
       RestfulSync::ApiNotifier.decorated(@user).as_json.should eq(hash)
     end
 

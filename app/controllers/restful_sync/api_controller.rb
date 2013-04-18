@@ -10,7 +10,8 @@ module RestfulSync
     end
 
     def init
-      @model = model_const_from request.path
+      p params
+      @model = params.delete(:model).constantize
       @status = 404
       @response = {}
     end
@@ -46,12 +47,5 @@ module RestfulSync
       render_json
     end
 
-    protected
-
-    def model_const_from path
-      path = path.split('/').drop(2)
-      path.pop if path.last.match(/^[0-9]+$/)
-      path.join('/').singularize.camelize.constantize
-    end
   end
 end

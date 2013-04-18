@@ -16,7 +16,7 @@ describe RestfulSync::ApiObserver do
 
     it "should call api POST" do
       @user = TestUser.new email: @email
-      Nestful.should_receive(:send).with(:post, "/test_users", {"id"=>1, "email"=>@email, "products_attributes"=>{}}, @api_format)
+      Nestful.should_receive(:send).with(:post, "#{ RestfulSync.end_point }/test_users", {"id"=>1, "email"=>@email, "products_attributes"=>{}, model: @user.class.to_s}, @api_format)
       @user.save
     end
 
@@ -24,13 +24,13 @@ describe RestfulSync::ApiObserver do
       email = "changed@test.com"
       @user = TestUser.create email: @email
       @user.email = email
-      Nestful.should_receive(:send).with(:put, "/test_users/#{ @user.id }", {"id"=>1, "email"=>email, "products_attributes"=>{}}, @api_format)
+      Nestful.should_receive(:send).with(:put, "#{ RestfulSync.end_point }/test_users/#{ @user.id }", {"id"=>1, "email"=>email, "products_attributes"=>{}, model: @user.class.to_s}, @api_format)
       @user.save
     end
 
     it "should call api DELETE" do
       @user = TestUser.create email: @email
-      Nestful.should_receive(:send).with(:delete, "/test_users/#{ @user.id }", {"id"=>1, "email"=>@email, "products_attributes"=>{}}, @api_format)
+      Nestful.should_receive(:send).with(:delete, "#{ RestfulSync.end_point }/test_users/#{ @user.id }", {"id"=>1, "email"=>@email, "products_attributes"=>{}, model: @user.class.to_s}, @api_format)
       @user.destroy
     end
   end
