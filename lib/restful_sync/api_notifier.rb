@@ -8,7 +8,6 @@ module RestfulSync
         Nestful.send(action, endpoint_for(object, id), decorated(object).as_json, :format => Nestful::Formats::JsonFormat.new)    
       end
 
-      # TODO : base url from configs
       def endpoint_for object, id=nil
         url_namespace = url_namespace_for object.class
         

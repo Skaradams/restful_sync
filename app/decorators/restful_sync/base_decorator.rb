@@ -28,6 +28,7 @@ module RestfulSync
             end
           end
         else
+
           if [:has_many, :has_and_belongs_to_many].include? association.macro
             key = association.name.to_s.singularize
             attributes["#{key}_ids"] = []
