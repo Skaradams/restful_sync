@@ -24,10 +24,10 @@ unless defined? SpecProduct
   end
 
   class TestUser < ActiveRecord::Base
-    has_many :products, class_name: 'TestProduct'
+    has_many :products, class_name: 'TestProduct', dependent: :destroy
     attr_accessible :email
 
-    accepts_nested_attributes_for :products
+    accepts_nested_attributes_for :products, allow_destroy: true
     validates_presence_of :email
   end
 

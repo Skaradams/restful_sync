@@ -47,6 +47,6 @@ describe RestfulSync::BaseDecorator do
       RestfulSync::ApiNotifier.decorated(product).as_json.should eq(hash)
     end
 
-    # TODO : test every use case (if...else)
+    # TODO : test Has one
   end
 end
