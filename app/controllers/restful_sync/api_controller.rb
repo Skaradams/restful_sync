@@ -10,7 +10,6 @@ module RestfulSync
     end
 
     def init
-      p params
       @model = params.delete(:model).constantize
       @status = 404
       @response = {}

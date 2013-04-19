@@ -6,7 +6,8 @@ module RestfulSync
     def as_json
       
       attributes = source.attributes
-      attributes = attributes.as_json.delete_if { |key, value| ["updated_at", "created_at"].include? key }
+      accessible = source.class.accessible_attributes + ["id"]
+      attributes = attributes.as_json.keep_if { |key, value| accessible.include? key }
       
       nested_resources = source.class.reflect_on_all_associations
 
@@ -28,7 +29,6 @@ module RestfulSync
             end
           end
         else
-
           if [:has_many, :has_and_belongs_to_many].include? association.macro
             key = association.name.to_s.singularize
             attributes["#{key}_ids"] = []

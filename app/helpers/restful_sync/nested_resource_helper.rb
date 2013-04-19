@@ -2,8 +2,9 @@ module RestfulSync
   module NestedResourceHelper
     def process_nested_resource
       ids, data = parse_resource_hash params["api"]
+
       create_resource ids, data do
-        resource = @model.where(id: params[:id]).first
+        resource = @model.where(id: params["api"]["id"]).first
         resource.destroy if resource
       end
     end
@@ -19,6 +20,7 @@ module RestfulSync
       if model.valid?
         set_ids model, ids
         before_save.call if block_given?
+        
         model.save
       end
       model

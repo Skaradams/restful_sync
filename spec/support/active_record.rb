@@ -23,15 +23,17 @@ unless defined? SpecProduct
     attr_accessible :name
   end
 
+  class TestUser < ActiveRecord::Base
+    has_many :products, class_name: 'TestProduct'
+    attr_accessible :email
+
+    accepts_nested_attributes_for :products
+    validates_presence_of :email
+  end
+
   class TestProduct < ActiveRecord::Base
     belongs_to :user, class_name: 'TestUser'
     has_many :properties, class_name: 'TestProperty'
     attr_accessible :name, :property_ids, :properties
-  end
-
-  class TestUser < ActiveRecord::Base
-    has_many :products, class_name: 'TestProduct'
-    attr_accessible :email
-    accepts_nested_attributes_for :products
   end
 end
