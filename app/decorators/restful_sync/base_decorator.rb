@@ -13,8 +13,8 @@ module RestfulSync
 
       nested_resources.each do |association|
 
+        # Nested attributes
         if source.nested_attributes_options.keys.include? association.name
-          
           if (associated = source.send(association.name))
             attributes["#{association.name}_attributes"] = {}
             # Has many
@@ -28,11 +28,16 @@ module RestfulSync
               attributes["#{association.name}_attributes"] = obj.as_json
             end
           end
+
+        # Array of ids
         else
           if [:has_many, :has_and_belongs_to_many].include? association.macro
             key = association.name.to_s.singularize
             attributes["#{key}_ids"] = []
             attributes["#{key}_ids"] = source.send(association.name).map { |obj| obj.id.to_s }
+          elsif association.macro == :has_one && source.send(association.name)
+            key = association.name.to_s.singularize
+            attributes["#{key}_ids"] = [source.send(association.name).id]
           end
         end
       end
