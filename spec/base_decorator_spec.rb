@@ -27,16 +27,7 @@ describe RestfulSync::BaseDecorator do
     it "should build hash of attributes" do
       hash = @user_attributes.merge("id" => @user.id, "products_attributes" => {})
       
-      RestfulSync::ApiNotifier.decorated(@user).as_json.should eq(hash)
-    end
-
-    it "should build hash with has one" do
-      @role = TestRole.create name: "role1"
-      @user.role = @role
-      @user.save
-      hash = @user_attributes.merge("id" => @user.id, "products_attributes" => {}, "role_ids" => [@role.id])
-
-      RestfulSync::ApiNotifier.decorated(@user).as_json.should eq(hash)
+      RestfulSync::BaseDecorator.decorate(@user).as_json.should eq(hash)
     end
 
     it "should build recursive hash of attributes" do
@@ -53,7 +44,16 @@ describe RestfulSync::BaseDecorator do
       product.property_ids = @properties.map{ |property| property.id.to_s }
       hash = @products_attributes["0"].merge("property_ids" => @properties.map{ |property| property.id.to_s })
       
-      RestfulSync::ApiNotifier.decorated(product).as_json.should eq(hash)
+      RestfulSync::BaseDecorator.decorate(product).as_json.should eq(hash)
+    end
+
+    it "should build hash with array of id" do
+      @role = TestRole.create name: "role1"
+      @user.role = @role
+      @user.save
+      hash = @user_attributes.merge("id" => @user.id, "products_attributes" => {}, "role_ids" => [@role.id])
+
+      RestfulSync::BaseDecorator.decorate(@user).as_json.should eq(hash)
     end
   end
 end

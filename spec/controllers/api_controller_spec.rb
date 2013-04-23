@@ -69,7 +69,7 @@ describe RestfulSync::ApiController do
         response.code.should eq("200")
       end
 
-      it "posts with changed params and returns 200" do
+      it "updates with changed params and returns 200" do
         email = "changed@test.com"
         @user.save
         @user.email = email
@@ -81,7 +81,16 @@ describe RestfulSync::ApiController do
     end
 
     context "embedded models" do
-      
+      it "updates with valid params and returns 200" do
+        name = "changed_product"
+        @products.first.name = name
+        @user.products = @products
+
+        post :create, use_route: :restful_sync, model: @user.class.to_s, api: RestfulSync::ApiNotifier.decorated(@user).as_json
+
+        response.code.should eq("200")
+        TestUser.first.products.all.map(&:name).should include(name)
+      end
     end
   end
 
