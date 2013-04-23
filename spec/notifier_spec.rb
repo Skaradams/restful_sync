@@ -20,5 +20,9 @@ describe RestfulSync::ApiNotifier do
     it "should create namespace from object" do 
       RestfulSync::UrlHelper.url_namespace_for(@user.class).should eq("test_users")
     end
+
+    it "should return decorated object" do
+      RestfulSync::ApiNotifier.decorated(@user).as_json.should eq(RestfulSync::BaseDecorator.decorate(@user).as_json)
+    end
   end
 end
