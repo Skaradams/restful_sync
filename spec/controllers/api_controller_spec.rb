@@ -48,8 +48,14 @@ describe RestfulSync::ApiController do
 
         post :create, use_route: :restful_sync, model: @user.class.to_s, api: RestfulSync::ApiNotifier.decorated(@user).as_json
 
+        user = TestUser.last
+
         response.code.should eq("200")
         TestUser.count.should > count
+        
+        user.attributes.should include(@user_attributes)
+        user.products.count.should eq(@products.length)
+        user.products.map(&:name).should eq(@products.map(&:name))
       end
     end
   end
@@ -73,20 +79,20 @@ describe RestfulSync::ApiController do
         email = "changed@test.com"
         @user.save
         @user.email = email
-        post :create, use_route: :restful_sync, model: @user.class.to_s, api: RestfulSync::ApiNotifier.decorated(@user).as_json
+        post :update, use_route: :restful_sync, model: @user.class.to_s, api: RestfulSync::ApiNotifier.decorated(@user).as_json
 
-        response.code.should eq("200")
         TestUser.first.email.should eq(email)
       end
     end
 
     context "embedded models" do
       it "updates with valid params and returns 200" do
+        @user.save
         name = "changed_product"
         @products.first.name = name
         @user.products = @products
 
-        post :create, use_route: :restful_sync, model: @user.class.to_s, api: RestfulSync::ApiNotifier.decorated(@user).as_json
+        post :update, use_route: :restful_sync, model: @user.class.to_s, api: RestfulSync::ApiNotifier.decorated(@user).as_json
 
         response.code.should eq("200")
         TestUser.first.products.all.map(&:name).should include(name)
