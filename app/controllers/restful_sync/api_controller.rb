@@ -2,7 +2,7 @@ module RestfulSync
   class ApiController < ApplicationController
     include NestedResourceHelper
     include UrlHelper
-    before_filter :init
+    before_filter :init, :authenticate
 
     rescue_from ActiveRecord::RecordNotFound do
       @response = {message: "record not found"}
@@ -15,6 +15,11 @@ module RestfulSync
       @response = {}
     end
 
+    def authenticate
+      # TODO : raise something => 404, with rescue from
+      raise unless RestfulSync::Authenticator.find_by_authentication_token(params.delete(:authentication_token))
+    end
+
     def render_json
       render status: @status, json: @response.to_json
     end
@@ -23,7 +28,7 @@ module RestfulSync
       if (object = process_nested_resource).valid?
         @status = 200
       else
-        @response = object.errors 
+        @response = object.errors if object
       end
 
       render_json
@@ -33,7 +38,7 @@ module RestfulSync
       if (object = process_nested_resource).valid?
         @status = 200
       else
-        @response = object.errors 
+        @response = object.errors if object
       end
       
       render_json

@@ -22,6 +22,11 @@ unless defined? SpecProduct
     t.string :name
   end
 
+  ActiveRecord::Migration.create_table :restful_sync_authenticators do |t|
+    t.string :authentication_token
+    t.string :instance_type, default: "observed"
+  end  
+
   class TestProperty < ActiveRecord::Base
     belongs_to :product, class_name: 'TestProduct'
     
@@ -48,4 +53,8 @@ unless defined? SpecProduct
     has_many :properties, class_name: 'TestProperty'
     attr_accessible :name, :property_ids, :properties
   end
+
+  token = "test_token"
+  RestfulSync::Authenticator.create authentication_token: token
+  RestfulSync.api_token = token
 end

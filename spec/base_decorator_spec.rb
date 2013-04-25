@@ -53,7 +53,8 @@ describe RestfulSync::BaseDecorator do
 
     it "should build hash with array of id" do
       @role = TestRole.create name: "role1"
-      @user.role = @role
+      @role.user = @user
+      @role.save
       @user.save
       hash = @user_attributes.merge("id" => @user.id, "products_attributes" => {})
 

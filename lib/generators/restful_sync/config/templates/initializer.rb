@@ -10,6 +10,9 @@ RestfulSync.config do |config|
   # Define the targeted API URL
   # config.end_point = "localhost:3000"
 
+  # Define the targeted API authentication token
+  # config.api_token = ""
+
   # Define models with specific behavior
   # config.override_api_controller = []
 end

@@ -9,6 +9,9 @@ module RestfulSync
   mattr_accessor :end_point
   @@end_point = ""  
 
+  mattr_accessor :api_token
+  @@api_token = ""
+
   mattr_accessor :override_api_controller
   @@override_api_controller = []
 

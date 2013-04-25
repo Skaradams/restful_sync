@@ -6,6 +6,7 @@ module RestfulSync
     def as_json
       
       attributes = source.attributes
+      # accessible = attributes.keys - ["created_at", "updated_at"]
       accessible = source.class.accessible_attributes + ["id"]
       attributes = attributes.as_json.keep_if { |key, value| accessible.include? key }
       

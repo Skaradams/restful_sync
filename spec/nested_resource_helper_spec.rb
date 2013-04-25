@@ -25,6 +25,7 @@ describe RestfulSync::NestedResourceHelper do
       end
       
       @user = TestUser.new @user_attributes
+      @role = TestRole.new name: "role1"
     end
 
     it "creates no user" do
@@ -53,8 +54,7 @@ describe RestfulSync::NestedResourceHelper do
       end
 
       @user.products = @products
-      @user.role = @role
-      @role = TestRole.create name: "role1"
+      
       @user.save
 
       @params = { "api" => RestfulSync::ApiNotifier.decorated(@user).as_json }
@@ -68,7 +68,7 @@ describe RestfulSync::NestedResourceHelper do
       user = @model.last
       @model.count.should > count
       TestProduct.count.should > 0
-      user.role.should eq(@role)
+      
       user.products.first.properties.length.should > 0
       user.products.first.properties.should eq(@properties)
     end
