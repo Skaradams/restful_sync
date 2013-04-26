@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module RestfulSync
-  class AuthenticatorTest < ActiveSupport::TestCase
+  class ApiSourceTest < ActiveSupport::TestCase
     # test "the truth" do
     #   assert true
     # end

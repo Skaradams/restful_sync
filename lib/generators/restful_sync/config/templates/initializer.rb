@@ -7,9 +7,6 @@ RestfulSync.config do |config|
   # Define the accessible resources models
   # config.accessible_resources = []
 
-  # Define the targeted API URL
-  # config.end_point = "localhost:3000"
-
   # Define the targeted API authentication token
   # config.api_token = ""
 

@@ -4,18 +4,18 @@ describe RestfulSync::ApiNotifier do
   describe "API calls from observer" do
     before(:each) do
       Nestful.stub(:send) { "test" }
-      @endpoint = "test.com"
-      RestfulSync.end_point = @endpoint
+      
+      @source = RestfulSync::ApiSource.first
       @user = TestUser.create email: "test@test.com"
     end
 
     context "endpoint" do
       it "should build url from endpoint" do
-        RestfulSync::ApiNotifier.endpoint_for(@user).should eq("#{@endpoint}/test_users")
+        RestfulSync::ApiNotifier.endpoint_for(@source, @user).should eq("#{@source.end_point}/test_users")
       end
 
       it "should build url from endpoint and id" do
-        RestfulSync::ApiNotifier.endpoint_for(@user, @user.id).should eq("#{@endpoint}/test_users/#{@user.id}")
+        RestfulSync::ApiNotifier.endpoint_for(@source, @user, @user.id).should eq("#{@source.end_point}/test_users/#{@user.id}")
       end
     end
     

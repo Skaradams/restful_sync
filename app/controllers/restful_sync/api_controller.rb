@@ -10,14 +10,13 @@ module RestfulSync
     end
 
     def init
-      @model = params.delete(:model).constantize
+      @model = params["api"].delete(:model).constantize
       @status = 404
       @response = {}
     end
 
     def authenticate
-      # TODO : raise something => 404, with rescue from
-      raise unless RestfulSync::Authenticator.find_by_authentication_token(params.delete(:authentication_token))
+      raise ActiveRecord::RecordNotFound unless RestfulSync::ApiSource.find_by_authentication_token(params["api"].delete(:authentication_token))
     end
 
     def render_json

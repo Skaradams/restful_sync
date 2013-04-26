@@ -1,6 +1,6 @@
-class DeviseCreateRestfulSyncAuthenticators < ActiveRecord::Migration
+class DeviseCreateRestfulSyncApiSources < ActiveRecord::Migration
   def change
-    create_table(:restful_sync_authenticators) do |t|
+    create_table(:restful_sync_api_sources) do |t|
       # ## Database authenticatable
       # t.string :email,              :null => false, :default => ""
       # t.string :encrypted_password, :null => false, :default => ""
@@ -32,18 +32,15 @@ class DeviseCreateRestfulSyncAuthenticators < ActiveRecord::Migration
 
       ## Token authenticatable
       t.string :authentication_token
-      t.string :instance_type, default: "observed"
+      t.string :end_point
 
       t.timestamps
     end
 
-    # add_index :restful_sync_authenticators, :email,                :unique => true
-    # add_index :restful_sync_authenticators, :reset_password_token, :unique => true
-    # add_index :restful_sync_authenticators, :confirmation_token,   :unique => true
-    # add_index :restful_sync_authenticators, :unlock_token,         :unique => true
-    add_index :restful_sync_authenticators, :authentication_token, :unique => true
-
-    auth = RestfulSync::Authenticator.create instance_type: "self_instance"
-    auth.reset_authentication_token!
+    # add_index :restful_sync_api_sources, :email,                :unique => true
+    # add_index :restful_sync_api_sources, :reset_password_token, :unique => true
+    # add_index :restful_sync_api_sources, :confirmation_token,   :unique => true
+    # add_index :restful_sync_api_sources, :unlock_token,         :unique => true
+    add_index :restful_sync_api_sources, :authentication_token, :unique => true
   end
 end

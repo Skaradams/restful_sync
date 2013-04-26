@@ -6,9 +6,6 @@ module RestfulSync
   mattr_accessor :accessible_resources
   @@accessible_resources = []  
 
-  mattr_accessor :end_point
-  @@end_point = ""  
-
   mattr_accessor :api_token
   @@api_token = ""
 
