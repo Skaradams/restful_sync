@@ -9,14 +9,14 @@ module RestfulSync
       render_json
     end
 
-    def init
+    def init      
       @model = params["api"].delete(:model).constantize
       @status = 404
       @response = {}
     end
 
     def authenticate
-      raise ActiveRecord::RecordNotFound unless RestfulSync::ApiSource.find_by_authentication_token(params["api"].delete(:authentication_token))
+      raise ActiveRecord::RecordNotFound unless RestfulSync::ApiClient.find_by_authentication_token(params["api"].delete(:authentication_token))
     end
 
     def render_json

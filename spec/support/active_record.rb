@@ -22,7 +22,7 @@ unless defined? SpecProduct
     t.string :name
   end
 
-  ActiveRecord::Migration.create_table :restful_sync_api_sources do |t|
+  ActiveRecord::Migration.create_table :restful_sync_api_clients do |t|
     t.string :authentication_token
     t.string :end_point
   end  
@@ -55,6 +55,6 @@ unless defined? SpecProduct
   end
 
   token = "test_token"
-  RestfulSync::ApiSource.create authentication_token: token, end_point: "test.com"
+  RestfulSync::ApiClient.create authentication_token: token, end_point: "test.com"
   RestfulSync.api_token = token
 end

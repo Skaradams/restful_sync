@@ -1,6 +1,6 @@
-class DeviseCreateRestfulSyncApiSources < ActiveRecord::Migration
+class DeviseCreateRestfulSyncApiClients < ActiveRecord::Migration
   def change
-    create_table(:restful_sync_api_sources) do |t|
+    create_table(:restful_sync_api_clients) do |t|
       # ## Database authenticatable
       # t.string :email,              :null => false, :default => ""
       # t.string :encrypted_password, :null => false, :default => ""
@@ -32,15 +32,14 @@ class DeviseCreateRestfulSyncApiSources < ActiveRecord::Migration
 
       ## Token authenticatable
       t.string :authentication_token
-      t.string :end_point
 
       t.timestamps
     end
 
-    # add_index :restful_sync_api_sources, :email,                :unique => true
-    # add_index :restful_sync_api_sources, :reset_password_token, :unique => true
-    # add_index :restful_sync_api_sources, :confirmation_token,   :unique => true
-    # add_index :restful_sync_api_sources, :unlock_token,         :unique => true
-    add_index :restful_sync_api_sources, :authentication_token, :unique => true
+    # add_index :restful_sync_api_clients, :email,                :unique => true
+    # add_index :restful_sync_api_clients, :reset_password_token, :unique => true
+    # add_index :restful_sync_api_clients, :confirmation_token,   :unique => true
+    # add_index :restful_sync_api_clients, :unlock_token,         :unique => true
+    add_index :restful_sync_api_clients, :authentication_token, :unique => true
   end
 end
