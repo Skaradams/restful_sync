@@ -5,7 +5,7 @@ describe RestfulSync::ApiNotifier do
     before(:each) do
       Nestful.stub(:send) { "test" }
       
-      @source = RestfulSync::ApiClient.first
+      @source = RestfulSync::ApiTarget.first
       @user = TestUser.create email: "test@test.com"
     end
 

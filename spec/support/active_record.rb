@@ -24,8 +24,11 @@ unless defined? SpecProduct
 
   ActiveRecord::Migration.create_table :restful_sync_api_clients do |t|
     t.string :authentication_token
-    t.string :end_point
   end  
+
+  ActiveRecord::Migration.create_table :restful_sync_api_targets do |t|
+    t.string :end_point
+  end
 
   class TestProperty < ActiveRecord::Base
     belongs_to :product, class_name: 'TestProduct'
@@ -55,6 +58,7 @@ unless defined? SpecProduct
   end
 
   token = "test_token"
-  RestfulSync::ApiClient.create authentication_token: token, end_point: "test.com"
+  RestfulSync::ApiClient.create authentication_token: token
+  RestfulSync::ApiTarget.create end_point: "test.com"
   RestfulSync.api_token = token
 end

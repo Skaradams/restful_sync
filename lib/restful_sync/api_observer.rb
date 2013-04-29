@@ -8,21 +8,15 @@ module RestfulSync
     end
     
     def after_create object
-      RestfulSync::ApiTarget.all.each do |target|
-        ApiNotifier.notify!(:post, object, target)
-      end
+      ApiNotifier.notify!(:post, object)
     end
 
     def after_update object
-      RestfulSync::ApiTarget.all.each do |target|
-        ApiNotifier.notify!(:put, object, target)
-      end
+      ApiNotifier.notify!(:put, object)
     end
 
     def after_destroy object
-      RestfulSync::ApiTarget.all.each do |target|
-        ApiNotifier.notify!(:delete, object, target)
-      end
+      ApiNotifier.notify!(:delete, object)
     end
   end
 end

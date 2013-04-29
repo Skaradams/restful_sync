@@ -12,4 +12,7 @@ RestfulSync.config do |config|
 
   # Define models with specific behavior
   # config.override_api_controller = []
+
+  # Define conditions that ensure API calls
+  # config.sync_filter = lambda { |object, target| object.stores.include?(target) }
 end

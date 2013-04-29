@@ -3,15 +3,20 @@ module RestfulSync
     require 'nestful'
     
     class << self
-      def notify! action, object, target
+      def notify! action, object
         id = object.id if %(put delete).include? action.to_s 
-        Nestful.send(
-          action, 
-          endpoint_for(target, object, id), 
-
-          decorated(object).as_json.merge(model: object.class.to_s, authentication_token: RestfulSync.api_token), 
-          :format => Nestful::Formats::JsonFormat.new
-        )    
+        params = decorated(object).as_json.merge(model: object.class.to_s, authentication_token: RestfulSync.api_token)
+        
+        RestfulSync::ApiTarget.all.each do |target|
+          if RestfulSync.sync_object? object, target
+            Nestful.send(
+              action, 
+              endpoint_for(target, object, id), 
+              params, 
+              :format => Nestful::Formats::JsonFormat.new
+            )
+          end
+        end    
       end
 
       def endpoint_for target, object, id=nil

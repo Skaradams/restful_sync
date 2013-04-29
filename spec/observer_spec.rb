@@ -12,7 +12,7 @@ describe RestfulSync::ApiObserver do
 
       Nestful.stub(:send) { "test" }
       @email = "test@test.com"
-      @source = RestfulSync::ApiClient.first
+      @source = RestfulSync::ApiTarget.first
     end
 
     it "should call api POST" do
