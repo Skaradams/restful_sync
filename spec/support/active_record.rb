@@ -30,6 +30,13 @@ unless defined? SpecProduct
     t.string :end_point
   end
 
+  ActiveRecord::Migration.create_table :restful_sync_sync_refs do |t|
+    t.integer :resource_id
+    t.string :resource_type
+    t.string :uuid
+  end
+
+
   class TestProperty < ActiveRecord::Base
     belongs_to :product, class_name: 'TestProduct'
     
@@ -45,7 +52,7 @@ unless defined? SpecProduct
   class TestUser < ActiveRecord::Base
     has_many :products, class_name: 'TestProduct', dependent: :destroy
     belongs_to :role, class_name: 'TestRole', dependent: :destroy
-    attr_accessible :email
+    attr_accessible :email, :products_attributes
 
     accepts_nested_attributes_for :products, allow_destroy: true
     validates_presence_of :email
@@ -62,3 +69,4 @@ unless defined? SpecProduct
   RestfulSync::ApiTarget.create end_point: "test.com"
   RestfulSync.api_token = token
 end
+

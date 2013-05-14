@@ -7,12 +7,12 @@ module RestfulSync
       
       attributes = source.attributes
       # accessible = attributes.keys - ["created_at", "updated_at"]
-      accessible = source.class.accessible_attributes + ["id"]
+      accessible = source.class.accessible_attributes
       attributes = attributes.as_json.keep_if { |key, value| accessible.include? key }
       
-      nested_resources = source.class.reflect_on_all_associations
+      associations = source.class.reflect_on_all_associations
 
-      nested_resources.each do |association|
+      associations.each do |association|
         # Nested attributes
         if source.nested_attributes_options.keys.include? association.name
           if (associated = source.send(association.name))
@@ -33,7 +33,6 @@ module RestfulSync
         else
           if [:has_many, :has_and_belongs_to_many].include? association.macro
             key = association.name.to_s.singularize
-            attributes["#{key}_ids"] = []
             attributes["#{key}_ids"] = source.send(association.name).map { |obj| obj.id.to_s }
           # elsif association.macro == :has_one && source.send(association.name)
           #   key = association.name.to_s.singularize
