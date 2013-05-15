@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe RestfulSync::Referrable, wip: true do
+describe RestfulSync::Referrable do
   before(:each) do
     @user_attributes = { "email" => "test@test.com" }
 

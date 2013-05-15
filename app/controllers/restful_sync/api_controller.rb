@@ -24,8 +24,8 @@ module RestfulSync
     end
 
     def create
-      if (object = process_nested_resource).valid?
-        @status = 200
+      if (object = @model.create(@model.from_sync(params["api"]))).valid?
+        @status = 200    
       else
         @response = object.errors if object
       end
@@ -34,7 +34,11 @@ module RestfulSync
     end
   
     def update
-      if (object = process_nested_resource).valid?
+
+      parameters = @model.from_sync(params["api"])
+      object = @model.find(parameters.delete("id"))
+      
+      if object.update_attributes(@model.from_sync(parameters))
         @status = 200
       else
         @response = object.errors if object

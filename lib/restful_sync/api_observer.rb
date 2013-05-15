@@ -8,10 +8,12 @@ module RestfulSync
     end
     
     def after_create object
+      p "CREATE"
       ApiNotifier.notify!(:post, object)
     end
 
     def after_update object
+      p "UPDATE"
       ApiNotifier.notify!(:put, object)
     end
 

@@ -15,15 +15,16 @@ describe RestfulSync::ApiObserver do
       @source = RestfulSync::ApiTarget.first
     end
 
-    it "should call api POST" do
-      @user = TestUser.new email: @email
+    it "should call api POST", wip: true do
+      @user = TestUser.create email: @email
 
       Nestful.should_receive(:send).with(
         :post, 
         "#{ @source.end_point }/test_users", 
-        {"id"=>1, "email"=>@email, "products_attributes"=>{}, model: @user.class.to_s, authentication_token: RestfulSync.api_token}, 
+        @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token),
         @api_format
       )
+
       @user.save
     end
 
@@ -34,7 +35,7 @@ describe RestfulSync::ApiObserver do
       Nestful.should_receive(:send).with(
         :put, 
         "#{ @source.end_point }/test_users/#{ @user.id }", 
-        {"id"=>1, "email"=>email, "products_attributes"=>{}, model: @user.class.to_s, authentication_token: RestfulSync.api_token}, 
+        @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token), 
         @api_format
       )
       @user.save
@@ -45,7 +46,7 @@ describe RestfulSync::ApiObserver do
       Nestful.should_receive(:send).with(
         :delete, 
         "#{ @source.end_point }/test_users/#{ @user.id }", 
-        {"id"=>1, "email"=>@email, "products_attributes"=>{}, model: @user.class.to_s, authentication_token: RestfulSync.api_token}, 
+        @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token), 
         @api_format
       )
       @user.destroy

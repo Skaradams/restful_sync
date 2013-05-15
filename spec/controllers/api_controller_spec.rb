@@ -27,7 +27,7 @@ describe RestfulSync::ApiController do
     context "simple model" do
       it "posts with no params and returns 404" do
         post :create, use_route: :restful_sync, api: {authentication_token: RestfulSync.api_token, model: @user.class.to_s}
-      
+         
         response.code.should eq("404")
       end
 
