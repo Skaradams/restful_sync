@@ -5,9 +5,6 @@ module RestfulSync
     validates_presence_of :resource_type, :uuid
     
     before_validation :generate_uuid
-    
-    def ensure_ref
-    end
 
     def generate_uuid
 

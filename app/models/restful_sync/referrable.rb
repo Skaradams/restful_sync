@@ -3,19 +3,24 @@ module RestfulSync
     extend ActiveSupport::Concern
 
     included do
-      attr_accessible :sync_ref_attributes
-      has_one :sync_ref, class_name: "RestfulSync::SyncRef", as: :resource
-      accepts_nested_attributes_for :sync_ref
-      
-      # Problems with referrable included in sync_ref
-      # validates_presence_of :sync_ref
-      
-      before_validation :ensure_ref
+      def self.inherited(klass)
+        unless klass.name == "RestfulSync::SyncRef"
+          klass.attr_accessible :sync_ref_attributes
+          klass.has_one :sync_ref, class_name: "RestfulSync::SyncRef", as: :resource
+          klass.accepts_nested_attributes_for :sync_ref
+          
+          # Problems with referrable included in sync_ref
+          # validates_presence_of :sync_ref
+          
+          klass.before_validation :ensure_ref
+        end
+      end
     end
     
     def ensure_ref
-      # self.sync_ref = RestfulSync::SyncRef.create unless self.sync_ref
-      self.build_sync_ref unless sync_ref
+      self.sync_ref = RestfulSync::SyncRef.new unless self.sync_ref
+
+      # self.build_sync_ref unless sync_ref
     end
 
     # Called from : BaseDecorator#as_json
@@ -60,19 +65,26 @@ module RestfulSync
 
             # TODO : dynamic key (uuid ou uuids)
             # p key
-            if association.macro == :has_many
-              end_str = "uuids"
-            else
-              end_str = "uuid"
-            end
 
-            uuid_key = "#{association.name.to_s.singularize}_#{end_str}"
-            # p uuid_key
-            # p "uuid"
-            # p uuid_key
-            
-            attributes[uuid_key] = association.collection? ? object.map { |obj| uuid_from(obj.id, klass) } : uuid_from(object.id, klass)
-            # apply.call { |obj| uuid_from(obj.id, klass) }
+            unless self.class.name == "RestfulSync::SyncRef"
+
+              if association.macro == :has_many
+                uuid_str = "uuids"
+                id_str = "ids"
+              else
+                uuid_str = "uuid"
+                id_str = "id"
+              end
+
+              uuid_key = "#{association.name.to_s.singularize}_#{uuid_str}"
+              id_key = "#{association.name.to_s.singularize}_#{id_str}"
+              # p uuid_key
+              # p "uuid"
+              # p uuid_key
+              attributes.delete(id_key)
+              attributes[uuid_key] = association.collection? ? object.map { |obj| uuid_from(obj.id, klass) } : uuid_from(object.id, klass)
+              # apply.call { |obj| uuid_from(obj.id, klass) }
+            end
           end
         end
       end
@@ -99,17 +111,22 @@ module RestfulSync
       def from_sync tree
         tree = tree.reduce({}) do |hash, pair|
           key, value = pair
+
           if key.match(/\w+uuid(s?)$/)
             new_key = key.gsub(/uuid(s?)$/, 'id\1')
+
             hash[new_key] = ids_from_uuids(value)
           elsif value.is_a? Hash
             hash[key] = from_sync(value)
+          elsif value.is_a? Array
+            hash[key] = value.map { |val| from_sync(val) }
           else
             hash[key] = value
           end
           hash
         end
-        
+        p "////////////////"
+        p tree
         if tree["sync_ref_attributes"]
           uuid = tree["sync_ref_attributes"]["uuid"]
           

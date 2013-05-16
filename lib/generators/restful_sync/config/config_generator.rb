@@ -20,17 +20,5 @@ module RestfulSync
       mount_path = ask("Where would you like to mount the API ? [/api]").presence || '/api'
       route "mount RestfulSync::Engine => '#{ mount_path.match(/^\//) ? mount_path : "/#{mount_path}" }', :as => '#{ mount_path.gsub(/^\//, '') }' "
     end
-
-    def add_observer_to_application
-      application do
-        "
-    config.after_initialize do
-      ActiveRecord::Base.observers = RestfulSync::ApiObserver
-
-      ActiveRecord::Base.instantiate_observers
-    end
-        "
-      end
-    end
   end
 end
