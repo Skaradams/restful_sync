@@ -16,16 +16,19 @@ describe RestfulSync::ApiObserver do
     end
 
     it "should call api POST", wip: true do
-      @user = TestUser.create email: @email
-
+      @user = TestUser.new email: @email
+      @user.id = 1
+      @user.sync_ref = RestfulSync::SyncRef.new uuid: "testuuid"
+      
       Nestful.should_receive(:send).with(
         :post, 
         "#{ @source.end_point }/test_users", 
-        @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token),
+        {restful_sync: @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token)},
         @api_format
       )
 
       @user.save
+
     end
 
     it "should call api PUT" do
@@ -34,8 +37,8 @@ describe RestfulSync::ApiObserver do
       @user.email = email
       Nestful.should_receive(:send).with(
         :put, 
-        "#{ @source.end_point }/test_users/#{ @user.id }", 
-        @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token), 
+        "#{ @source.end_point }/test_users/#{ @user.sync_ref.uuid }", 
+        {restful_sync: @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token)}, 
         @api_format
       )
       @user.save
@@ -45,8 +48,8 @@ describe RestfulSync::ApiObserver do
       @user = TestUser.create email: @email
       Nestful.should_receive(:send).with(
         :delete, 
-        "#{ @source.end_point }/test_users/#{ @user.id }", 
-        @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token), 
+        "#{ @source.end_point }/test_users/#{ @user.sync_ref.uuid }", 
+        {restful_sync: @user.to_sync.merge(model: @user.class.to_s, authentication_token: RestfulSync.api_token)},
         @api_format
       )
       @user.destroy

@@ -26,7 +26,7 @@ describe RestfulSync::ApiController do
   describe "POST #create" do
     context "simple model" do
       it "posts with no params and returns 404" do
-        post :create, use_route: :restful_sync, api: {authentication_token: RestfulSync.api_token, model: @user.class.to_s}
+        post :create, use_route: :restful_sync, restful_sync: {authentication_token: RestfulSync.api_token, model: @user.class.to_s}
          
         response.code.should eq("404")
       end
@@ -34,7 +34,7 @@ describe RestfulSync::ApiController do
       it "posts with valid params, bad token and returns 404" do
         count = TestUser.count
 
-        post :create, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: "fake_token", model: @user.class.to_s)
+        post :create, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: "fake_token", model: @user.class.to_s)
 
         response.code.should eq("404")
       end
@@ -42,7 +42,7 @@ describe RestfulSync::ApiController do
       it "posts with valid params and returns 200" do
         count = TestUser.count
 
-        post :create, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
+        post :create, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
 
         response.code.should eq("200")
         TestUser.count.should > count
@@ -54,7 +54,7 @@ describe RestfulSync::ApiController do
         count = TestUser.count        
         @user.products = @products
 
-        post :create, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
+        post :create, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
 
         user = TestUser.last
 
@@ -71,14 +71,14 @@ describe RestfulSync::ApiController do
   describe "PUT #update" do
     context "simple model" do
       it "updates with no id and returns 404" do
-        put :update, use_route: :restful_sync, api: {authentication_token: RestfulSync.api_token, model: @user.class.to_s}
+        put :update, use_route: :restful_sync, restful_sync: {authentication_token: RestfulSync.api_token, model: @user.class.to_s}
       
         response.code.should eq("404")
       end
 
       it "updates with params and returns 200" do
         @user.save
-        put :update, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
+        put :update, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
       
         response.code.should eq("200")
       end
@@ -87,7 +87,7 @@ describe RestfulSync::ApiController do
         email = "changed@test.com"
         @user.save
         @user.email = email
-        post :update, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
+        post :update, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
 
         TestUser.first.email.should eq(email)
       end
@@ -100,7 +100,7 @@ describe RestfulSync::ApiController do
         @products.first.name = name
         @user.products = @products
 
-        post :update, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
+        post :update, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s)
 
         response.code.should eq("200")
         TestUser.first.products.all.map(&:name).should include(name)
@@ -111,23 +111,24 @@ describe RestfulSync::ApiController do
   describe "DELETE #destroy" do
     context "simple model" do
       it "deletes with no id and returns 404" do
-        delete :destroy, use_route: :restful_sync, api: {model: @user.class.to_s, authentication_token: RestfulSync.api_token}
+        delete :destroy, use_route: :restful_sync, restful_sync: {model: @user.class.to_s, authentication_token: RestfulSync.api_token}
       
         response.code.should eq("404")
       end
 
       it "deletes with wrong id and returns 404" do
         @user.save
-        delete :destroy, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s), id: (@user.id + 1)
-      
+        delete :destroy, use_route: :restful_sync, restful_sync: { authentication_token: RestfulSync.api_token, model: @user.class.to_s }, id: "testbidon"
+        
         response.code.should eq("404")
         TestUser.count.should eq(1)
       end
 
       it "deletes with good id and returns 200" do
         @user.save
-        delete :destroy, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s), id: @user.id
-      
+        p @user.sync_ref.uuid
+        delete :destroy, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s), id: @user.sync_ref.uuid
+        
         response.code.should eq("200")
         TestUser.count.should eq(0)
       end
@@ -137,7 +138,7 @@ describe RestfulSync::ApiController do
       it "deletes embedded models" do
         @user.products = @products
         @user.save
-        delete :destroy, use_route: :restful_sync, api: RestfulSync::ApiNotifier.decorated(@user).as_json.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s), id: @user.id
+        delete :destroy, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s), id: @user.sync_ref.uuid
 
         response.code.should eq("200")
         TestUser.count.should eq(0)

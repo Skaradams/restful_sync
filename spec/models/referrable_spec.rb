@@ -54,15 +54,6 @@ describe RestfulSync::Referrable do
       @user.products << @products.first
       @user.save
 
-      # properties_attributes = @properties.reduce([]) do |array, property|
-      #   array << { 
-      #     "name" => property.name, "ref_spec_attributes" => { 
-      #       "uuid" => property.sync_ref.uuid,
-      #       "resource_type" => property.class
-      #     } 
-      #   }
-      # end
-
       properties_uuids = @properties.map { |property| property.sync_ref.uuid }
       hash = @user.to_sync
     
@@ -74,7 +65,6 @@ describe RestfulSync::Referrable do
   end
 
   describe "unserializing a model" do
-    
     it "should find a user from uuid" do
       @user.save
 
