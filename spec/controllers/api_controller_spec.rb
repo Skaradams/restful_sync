@@ -126,7 +126,6 @@ describe RestfulSync::ApiController do
 
       it "deletes with good id and returns 200" do
         @user.save
-        p @user.sync_ref.uuid
         delete :destroy, use_route: :restful_sync, restful_sync: @user.to_sync.merge(authentication_token: RestfulSync.api_token, model: @user.class.to_s), id: @user.sync_ref.uuid
         
         response.code.should eq("200")

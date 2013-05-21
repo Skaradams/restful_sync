@@ -6,7 +6,7 @@ module RestfulSync
       def self.inherited(klass)
         unless klass.name == "RestfulSync::SyncRef"
           klass.attr_accessible :sync_ref_attributes
-          klass.has_one :sync_ref, class_name: "RestfulSync::SyncRef", as: :resource
+          klass.has_one :sync_ref, class_name: "RestfulSync::SyncRef", as: :resource, dependent: :destroy
           klass.accepts_nested_attributes_for :sync_ref
           
           # Problems with referrable included in sync_ref
@@ -41,7 +41,6 @@ module RestfulSync
             
             attributes[nested_key] = association.collection? ? object.map(&:to_sync) : object.to_sync 
           else
-
             unless self.class.name == "RestfulSync::SyncRef"
               if association.macro == :has_many
                 uuid_str = "uuids"
@@ -50,16 +49,18 @@ module RestfulSync
                 uuid_str = "uuid"
                 id_str = "id"
               end
-
+              
               uuid_key = "#{association.name.to_s.singularize}_#{uuid_str}"
               id_key = "#{association.name.to_s.singularize}_#{id_str}"
 
               attributes.delete(id_key)
-              attributes[uuid_key] = association.collection? ? object.map { |obj| uuid_from(obj.id, klass) } : uuid_from(object.id, klass)
+
+              attributes[uuid_key] = association.collection? ? object.map { |obj| obj.sync_ref.uuid } : object.sync_ref.uuid
             end
           end
         end
       end
+      p attributes
       attributes
     end
     
@@ -80,7 +81,6 @@ module RestfulSync
       # Product :: { uuid: "aa-aaa", name: "xx", taxonomy_uuids: ["aaaa", "bbbb"] } 
       #
       def from_sync tree
-        p tree
         tree = tree.reduce({}) do |hash, pair|
           key, value = pair
 
@@ -102,7 +102,10 @@ module RestfulSync
         if tree["sync_ref_attributes"]
           # uuid = tree["sync_ref_attributes"]["uuid"]
           object = RestfulSync::SyncRef.find_by_uuid tree["sync_ref_attributes"]["uuid"]
-          tree["id"] = object.resource_id if object
+          if object
+            tree["id"] = object.resource_id 
+            tree.delete('sync_ref_attributes')
+          end
         end
         tree
       end
