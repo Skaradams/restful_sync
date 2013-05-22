@@ -8,15 +8,15 @@ module RestfulSync
     end
     
     def after_create object
-      ApiNotifier.notify!(:post, object)
+      ApiNotifier.new().post object
     end
 
     def after_update object
-      ApiNotifier.notify!(:put, object)
+      ApiNotifier.new().put object
     end
 
     def after_destroy object
-      ApiNotifier.notify!(:delete, object)
+      ApiNotifier.new().delete object
     end
   end
 end

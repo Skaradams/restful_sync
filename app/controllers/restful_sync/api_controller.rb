@@ -25,6 +25,8 @@ module RestfulSync
     end
 
     def create
+      p 'CREATE'
+      p params
       if (object = @model.create(@model.from_sync(@params))).valid?
         @status = 200    
       else
