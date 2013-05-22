@@ -55,7 +55,6 @@ module RestfulSync
       if object && object.resource && object.resource.destroy
         @status = 200
       end
-      @status = 200
       render_json
     end
   end

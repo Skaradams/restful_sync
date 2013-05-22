@@ -2,6 +2,7 @@ require "spec_helper"
 
 describe RestfulSync::Referrable do
   before(:each) do
+    Nestful.stub(:send) { "test" }
     @user_attributes = { "email" => "test@test.com" }
 
     @products_attributes = []
@@ -30,7 +31,6 @@ describe RestfulSync::Referrable do
       hash.should include(@user_attributes)
       hash.should include("sync_ref_attributes")
       hash["sync_ref_attributes"].should include("uuid")
-      hash["sync_ref_attributes"].should include("resource_type")
     end
 
     it "should send a uuid instead of id" do

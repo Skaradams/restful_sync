@@ -5,7 +5,6 @@ module RestfulSync
     class << self
       def notify! action, object
         id = object.sync_ref.uuid if %(put delete).include? action.to_s 
-        # params = decorated(object).as_json.merge(model: object.class.to_s, authentication_token: RestfulSync.api_token)
         params = object.to_sync.merge(model: object.class.to_s, authentication_token: RestfulSync.api_token)
         
         RestfulSync::ApiTarget.all.each do |target|

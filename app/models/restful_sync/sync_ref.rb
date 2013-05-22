@@ -11,7 +11,7 @@ module RestfulSync
     end
 
     def to_sync
-      { uuid: uuid }
+      { "uuid" => uuid }
     end
   end    
 end

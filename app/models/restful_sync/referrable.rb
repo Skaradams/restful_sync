@@ -60,7 +60,6 @@ module RestfulSync
           end
         end
       end
-      p attributes
       attributes
     end
     
@@ -100,7 +99,6 @@ module RestfulSync
         end
 
         if tree["sync_ref_attributes"]
-          # uuid = tree["sync_ref_attributes"]["uuid"]
           object = RestfulSync::SyncRef.find_by_uuid tree["sync_ref_attributes"]["uuid"]
           if object
             tree["id"] = object.resource_id 
