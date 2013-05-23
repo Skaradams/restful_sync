@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "rails", "~> 3.2.0"
-  s.add_dependency "nestful", ">= 1.0.0.rc2"
   s.add_dependency 'httparty'
   s.add_dependency 'draper', '~> 1.0'
   s.add_dependency 'devise'
