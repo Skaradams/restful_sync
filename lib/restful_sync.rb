@@ -32,4 +32,5 @@ end
 require "restful_sync/url_helper"
 require "restful_sync/api_notifier"
 require "restful_sync/api_observer"
+require "restful_sync/referrable"
 require "restful_sync/engine"
