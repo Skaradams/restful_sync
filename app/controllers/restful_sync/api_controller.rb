@@ -25,8 +25,6 @@ module RestfulSync
     end
 
     def create
-      p 'CREATE'
-      p params
       if (object = @model.create(@model.from_sync(@params))).valid?
         @status = 200    
       else
@@ -37,8 +35,6 @@ module RestfulSync
     end
   
     def update
-      # p @params
-      # p @model.from_sync(@params)
       parameters = @model.from_sync(@params)
       object = @model.find(parameters.delete("id"))
 

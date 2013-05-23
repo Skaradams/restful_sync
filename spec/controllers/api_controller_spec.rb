@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe RestfulSync::ApiController do
   before(:each) do
-    Nestful.stub(:send) { "test" }
+    RestfulSync::ApiNotifier.stub(:send) { "test" }
 
     @user_attributes = { "email" => "test@test.com" }
 
