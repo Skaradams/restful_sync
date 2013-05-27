@@ -10,14 +10,14 @@ module RestfulSync
     end
 
     def init       
-      @params = params["restful_sync"]  
-      @model = @params.delete(:model).constantize
+      params["restful_sync"]
+      @model = params["restful_sync"].delete(:model).constantize
       @status = 404
       @response = {}
     end
 
     def authenticate
-      raise ActiveRecord::RecordNotFound unless RestfulSync::ApiClient.find_by_authentication_token(@params.delete(:authentication_token))
+      raise ActiveRecord::RecordNotFound unless RestfulSync::ApiClient.find_by_authentication_token(params["restful_sync"].delete(:authentication_token))
     end
 
     def render_json
@@ -25,7 +25,7 @@ module RestfulSync
     end
 
     def create
-      if (object = @model.create(@model.from_sync(@params))).valid?
+      if (object = @model.create(@model.from_sync(params["restful_sync"]))).valid?
         @status = 200    
       else
         @response = object.errors if object
@@ -35,7 +35,7 @@ module RestfulSync
     end
   
     def update
-      parameters = @model.from_sync(@params)
+      parameters = @model.from_sync(params["restful_sync"])
       object = @model.find(parameters.delete("id"))
 
       if object.update_attributes(parameters)

@@ -9,14 +9,11 @@ module RestfulSync
           klass.has_one :sync_ref, class_name: "RestfulSync::SyncRef", as: :resource, dependent: :destroy
           klass.accepts_nested_attributes_for :sync_ref
           
-          # Problems with referrable included in sync_ref
-          # validates_presence_of :sync_ref
-          
           klass.before_validation :ensure_ref
         end
       end
     end
-    
+
     def ensure_ref
       # self.sync_ref = RestfulSync::SyncRef.new unless self.sync_ref
       self.build_sync_ref unless sync_ref
@@ -25,10 +22,10 @@ module RestfulSync
     # Called from : BaseDecorator#as_json
     def to_sync
       nested_associations = self.nested_attributes_options.keys
-      accessible = self.class.accessible_attributes
-
-      attributes = self.attributes.as_json.keep_if { |key, value| accessible.include? key }
-
+      accessible = self.class.syncable_attributes
+      
+      attributes = self.attributes.as_json.keep_if { |key, value| accessible.include? key.to_sym }
+    
       associations = self.class.reflect_on_all_associations
 
       associations.each do |association|
@@ -60,6 +57,7 @@ module RestfulSync
           end
         end
       end
+
       attributes
     end
     
@@ -111,6 +109,14 @@ module RestfulSync
       def ids_from_uuids uuids
         ids = RestfulSync::SyncRef.where(uuid: uuids).pluck(:resource_id)
         uuids.is_a?(Array) ? ids : ids.first
+      end
+
+      def syncable_attributes= attributes
+        @syncable_attributes = attributes
+      end
+
+      def syncable_attributes
+        @syncable_attributes || accessible_attributes
       end
     end 
   end
