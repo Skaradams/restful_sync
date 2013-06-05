@@ -20,7 +20,7 @@ module RestfulSync
     end
 
     # Called from : BaseDecorator#as_json
-    def to_sync
+    def to_sync parent_class = ""
       nested_associations = self.nested_attributes_options.keys
       accessible = self.class.syncable_attributes
       
@@ -36,7 +36,7 @@ module RestfulSync
           if nested_associations.include?(association.name)
             nested_key = "#{ association.name }_attributes"
             
-            attributes[nested_key] = association.collection? ? object.map(&:to_sync) : object.to_sync 
+            attributes[nested_key] = association.collection? ? object.map { |obj| obj.to_sync self.class.to_s } : object.to_sync(self.class.to_s)
           else
             unless self.class.name == "RestfulSync::SyncRef"
               if association.macro == :has_many
@@ -52,7 +52,10 @@ module RestfulSync
 
               attributes.delete(id_key)
 
-              attributes[uuid_key] = association.collection? ? object.map { |obj| obj.sync_ref.uuid } : object.sync_ref.uuid
+              # Don't include id if association is parent in tree
+              unless parent_class.include? association.class_name
+                attributes[uuid_key] = association.collection? ? object.map { |obj| obj.sync_ref.uuid } : object.sync_ref.uuid
+              end
             end
           end
         end

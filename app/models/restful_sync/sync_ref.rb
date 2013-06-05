@@ -10,7 +10,7 @@ module RestfulSync
       self.uuid = SecureRandom.uuid unless uuid
     end
 
-    def to_sync
+    def to_sync parent
       { "uuid" => uuid }
     end
   end    
