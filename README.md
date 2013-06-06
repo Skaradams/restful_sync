@@ -39,6 +39,8 @@ end
 
 <tt>observed_resources</tt> is a list of models that trigger a call to the distant API when created, updated or deleted
 
+> You shouldn't include models that are nested in another observed resource
+
 <tt>accessible_resources</tt> is a list of models that can be accessed through the API
 
 <tt>api_token</tt> is the app token to ensure access to distant API (must have this token registered in its DB)
