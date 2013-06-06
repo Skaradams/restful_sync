@@ -4,8 +4,7 @@ You can use Restful sync to synchronize two databases that share the same struct
 
 ## Dependencies
 
-* [Nestful](https://github.com/maccman/nestful)
-* [Draper](https://github.com/drapergem/draper)
+* [HHTParty](https://github.com/jnunemaker/httparty)
 
 ## Configuration
 
@@ -33,11 +32,8 @@ RestfulSync.config do |config|
   # Define the accessible resources models
   config.accessible_resources = [Order]
 
-  # Define the targeted API URL
-  config.end_point = "www.example.com/api"
-
-  # Define models with specific behavior
-  config.override_api_controller = []
+  # Define the targeted API authentication token
+  config.api_token = "testapitoken" 
 end
 ```
 
@@ -45,7 +41,7 @@ end
 
 <tt>accessible_resources</tt> is a list of models that can be accessed through the API
 
-<tt>end_point</tt> is the base URL to the distant API
+<tt>api_token</tt> is the app token to ensure access to distant API (must have this token registered in its DB)
 
 > A model must not be define in both accessible and observed resources.
 
@@ -59,10 +55,10 @@ RestfulSync.config do |config|
 end
 ```
 
-<tt>override_api_controller</tt> is a list of models that will have specific routes
+<tt>override_api_controller</tt> is a list of custom API controllers
 
 ### Example for model <tt>User</tt>
-
+  
 routes will be the following :
 * POST /users => restful_sync/users#create
 * PUT /users/:id => restful_sync/users#update
@@ -71,19 +67,22 @@ routes will be the following :
 Then you need write your actions in <tt>app/controllers/restful_sync/users_controller.rb</tt>
 
 ```ruby
-def create
-  user = User.create params[:user]
-  
-  # @status and @response can be re-defined
-  if user.save
-    @status = 200
-  else
-    @response = object.errors 
-  end
+module RestfulSync
+  class UsersController < RestfulSync::ApiController
+    def create
+      user = User.new
+      user.encrypted_password = params[:restful_sync].delete(:encrypted_password)
+      user.save(validate: false)
 
-  # Must be called at the end of the action
-  render_json
+      user.update_attributes(params[:restful_sync])
+      if user.save
+        @status = 200
+      else
+        @response = user.errors 
+      end
+
+      render_json
+    end
+  end
 end
 ```
-
-If you don't define some actions in your controller, it will fallback to default behavior
