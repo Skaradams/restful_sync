@@ -20,5 +20,11 @@ module RestfulSync
       mount_path = ask("Where would you like to mount the API ? [/api]").presence || '/api'
       route "mount RestfulSync::Engine => '#{ mount_path.match(/^\//) ? mount_path : "/#{mount_path}" }', :as => '#{ mount_path.gsub(/^\//, '') }' "
     end
+
+    def migrate
+      if yes?('Would you like to install migrations ?')
+        rake 'restful_sync:install:migrations'
+      end
+    end
   end
 end
